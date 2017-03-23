@@ -40,12 +40,11 @@
 
 		private static void DoForFiles(string referenceFile, string courantFile, string diffsFile)
 		{
-			var referenceHtmlDoc = GetHtmlDoc(referenceFile);
-			var referenceDataColumns = referenceHtmlDoc.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th")).ToArray();
+			var referenceDataColumns = GetDataColumns(referenceFile).ToArray();
 			var referenceColumnsCount = referenceDataColumns.Length;
 
 			var courantHtmlDoc = GetHtmlDoc(courantFile);
-			var courantDataColumns = courantHtmlDoc.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th")).ToArray();
+			var courantDataColumns = GetDataColumns(courantHtmlDoc).ToArray();
 			var courantColumnsCount = courantDataColumns.Length;
 
 			if (referenceColumnsCount != courantColumnsCount)
@@ -58,17 +57,33 @@
 			courantHtmlDoc.Save(diffsFile);
 		}
 
+		private static HtmlDocument GetHtmlDoc(string filePath)
+		{
+			var referenceContent = File.ReadAllText(filePath);
+			referenceContent = WebUtility.HtmlDecode(referenceContent);
+			var referenceHtmlDoc = new HtmlDocument();
+			referenceHtmlDoc.LoadHtml(referenceContent);
+			return referenceHtmlDoc;
+		}
+
+		private static IEnumerable<HtmlNode> GetDataColumns(string file)
+		{
+			return GetDataColumns(GetHtmlDoc(file));
+		}
+
+		private static IEnumerable<HtmlNode> GetDataColumns(HtmlDocument htmlDocument)
+		{
+			return htmlDocument.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th"));
+		}
+
 		private static void CheckDataColumns(
 			IReadOnlyList<HtmlNode> referenceDataColumns,
 			IReadOnlyList<HtmlNode> courantDataColumns)
 		{
 			for (var i = 0; i < referenceDataColumns.Count; i++)
 			{
-				var referenceLine = referenceDataColumns[i];
-				var courantLine = courantDataColumns[i];
-
-				var referenceCells = referenceLine.Descendants().Where(d => d.Name == "td").ToArray();
-				var courantCells = courantLine.Descendants().Where(d => d.Name == "td").ToArray();
+				var referenceCells = GetDataCells(referenceDataColumns[i]).ToArray();
+				var courantCells = GetDataCells(courantDataColumns[i]).ToArray();
 
 				if (referenceCells.Length != courantCells.Length)
 				{
@@ -77,6 +92,11 @@
 
 				CheckDataCells(referenceCells, courantCells);
 			}
+		}
+
+		private static IEnumerable<HtmlNode> GetDataCells(HtmlNode dataLine)
+		{
+			return dataLine.Descendants().Where(d => d.Name == "td");
 		}
 
 		private static void CheckDataCells(IReadOnlyList<HtmlNode> referenceCells, IReadOnlyList<HtmlNode> courantCells)
@@ -90,15 +110,6 @@
 					courantCell.SetAttributeValue("style", "background-color:orange");
 				}
 			}
-		}
-
-		private static HtmlDocument GetHtmlDoc(string filePath)
-		{
-			var referenceContent = File.ReadAllText(filePath);
-			referenceContent = WebUtility.HtmlDecode(referenceContent);
-			var referenceHtmlDoc = new HtmlDocument();
-			referenceHtmlDoc.LoadHtml(referenceContent);
-			return referenceHtmlDoc;
 		}
 	}
 }
