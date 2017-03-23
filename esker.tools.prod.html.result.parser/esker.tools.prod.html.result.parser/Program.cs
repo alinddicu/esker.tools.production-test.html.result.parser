@@ -1,6 +1,7 @@
 ﻿namespace esker.tools.prod.html.result.parser
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Globalization;
 	using System.IO;
 	using System.Linq;
@@ -40,43 +41,55 @@
 		private static void DoForFiles(string referenceFile, string courantFile, string diffsFile)
 		{
 			var referenceHtmlDoc = GetHtmlDoc(referenceFile);
-			var referenceDescendants = referenceHtmlDoc.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th")).ToArray();
-			var referenceDescendantsCount = referenceDescendants.Length;
+			var referenceDataColumns = referenceHtmlDoc.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th")).ToArray();
+			var referenceColumnsCount = referenceDataColumns.Length;
 
 			var courantHtmlDoc = GetHtmlDoc(courantFile);
-			var courantDescendants = courantHtmlDoc.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th")).ToArray();
-			var courantDescendantsCount = courantDescendants.Length;
+			var courantDataColumns = courantHtmlDoc.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th")).ToArray();
+			var courantColumnsCount = courantDataColumns.Length;
 
-			if (referenceDescendantsCount != courantDescendantsCount)
+			if (referenceColumnsCount != courantColumnsCount)
 			{
 				throw new ApplicationException("Nombre de lignes différents");
 			}
 
-			for (var i = 0; i < referenceDescendantsCount; i++)
+			CheckDataColumns(referenceDataColumns, courantDataColumns);
+
+			courantHtmlDoc.Save(diffsFile);
+		}
+
+		private static void CheckDataColumns(
+			IReadOnlyList<HtmlNode> referenceDataColumns,
+			IReadOnlyList<HtmlNode> courantDataColumns)
+		{
+			for (var i = 0; i < referenceDataColumns.Count; i++)
 			{
-				var referenceLine = referenceDescendants[i];
-				var courantLine = courantDescendants[i];
+				var referenceLine = referenceDataColumns[i];
+				var courantLine = courantDataColumns[i];
 
-				var referenceColumns = referenceLine.Descendants().Where(d => d.Name == "td").ToArray();
-				var courantColumns = courantLine.Descendants().Where(d => d.Name == "td").ToArray();
+				var referenceCells = referenceLine.Descendants().Where(d => d.Name == "td").ToArray();
+				var courantCells = courantLine.Descendants().Where(d => d.Name == "td").ToArray();
 
-				if (referenceColumns.Length != courantColumns.Length)
+				if (referenceCells.Length != courantCells.Length)
 				{
 					throw new ApplicationException("Nombre de cellules différentes sur la ligne " + i);
 				}
 
-				for (var j = 0; j < referenceColumns.Length; j++)
+				CheckDataCells(referenceCells, courantCells);
+			}
+		}
+
+		private static void CheckDataCells(IReadOnlyList<HtmlNode> referenceCells, IReadOnlyList<HtmlNode> courantCells)
+		{
+			for (var j = 0; j < referenceCells.Count; j++)
+			{
+				var referenceCell = referenceCells[j];
+				var courantCell = courantCells[j];
+				if (referenceCell.InnerHtml != courantCell.InnerHtml)
 				{
-					var referenceColum = referenceColumns[j];
-					var courantColum = courantColumns[j];
-					if (referenceColum.InnerHtml != courantColum.InnerHtml)
-					{
-						courantColum.SetAttributeValue("style", "background-color:yellow");
-					}
+					courantCell.SetAttributeValue("style", "background-color:yellow");
 				}
 			}
-
-			courantHtmlDoc.Save(diffsFile);
 		}
 
 		private static HtmlDocument GetHtmlDoc(string filePath)
