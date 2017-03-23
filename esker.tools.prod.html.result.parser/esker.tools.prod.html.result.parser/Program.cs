@@ -87,7 +87,7 @@
 				var courantCell = courantCells[j];
 				if (referenceCell.InnerHtml != courantCell.InnerHtml)
 				{
-					courantCell.SetAttributeValue("style", "background-color:yellow");
+					courantCell.SetAttributeValue("style", "background-color:orange");
 				}
 			}
 		}
