@@ -7,38 +7,38 @@
 			var referenceMatrix = new HtmlDataMatrix(referenceFile);
 			var currentMatrix = new HtmlDataMatrix(courantFile);
 
-			CheckDataRows(referenceMatrix, currentMatrix);
+			CheckMatrixes(referenceMatrix, currentMatrix);
 
 			currentMatrix.Save(diffsFile);
 		}
 
-		private static void CheckDataRows(
+		private static void CheckMatrixes(
 			HtmlDataMatrix referenceMatrix,
 			HtmlDataMatrix currentMatrix)
 		{
-			foreach (var currentDataRow in currentMatrix.DataRows)
+			foreach (var currentDataRow in currentMatrix.Rows)
 			{
-				if (referenceMatrix.IsAdditionalDataRow(currentDataRow))
+				if (referenceMatrix.IsAdditionalRow(currentDataRow))
 				{
-					CheckDataCells(null, currentDataRow);
+					CheckCellsInRows(null, currentDataRow);
 					continue;
 				}
 
 				var currentDateFormat = currentDataRow.DateFormat;
-				var referenceDataRow = referenceMatrix.GetDataRowByDateFormat(currentDateFormat);
-				CheckDataCells(referenceDataRow, currentDataRow);
+				var referenceDataRow = referenceMatrix.GetRowByDateFormat(currentDateFormat);
+				CheckCellsInRows(referenceDataRow, currentDataRow);
 			}
 		}
 
-		private static void CheckDataCells(
-			HtmlDataRow referenceDataRow,
-			HtmlDataRow currentDataRow)
+		private static void CheckCellsInRows(
+			HtmlDataRow referenceRow,
+			HtmlDataRow currentRow)
 		{
-			for (var currentCellIndex = 0; currentCellIndex < currentDataRow.DataCells.Count; currentCellIndex++)
+			for (var currentCellIndex = 0; currentCellIndex < currentRow.Cells.Count; currentCellIndex++)
 			{
-				var currentCell = currentDataRow.DataCells[currentCellIndex];
-				if (referenceDataRow == null 
-					|| currentCell.IsDifferentText(referenceDataRow.DataCells[currentCellIndex]))
+				var currentCell = currentRow.Cells[currentCellIndex];
+				if (referenceRow == null 
+					|| currentCell.IsDifferentText(referenceRow.Cells[currentCellIndex]))
 				{
 					currentCell.MarkDifferent();
 				}

@@ -8,17 +8,17 @@
 	{
 		public HtmlDataRow(HtmlNode dataRow)
 		{
-			DataCells = FillDataCells(dataRow).ToList();
-			DateFormat = DataCells.First().InnerText;
+			Cells = InitCells(dataRow).ToList();
+			DateFormat = Cells.First().InnerText;
 		}
 
 		public string DateFormat { get; }
 
-		public IReadOnlyList<HtmlDataCell> DataCells { get; }
+		public IReadOnlyList<HtmlDataCell> Cells { get; }
 
-		private static IEnumerable<HtmlDataCell> FillDataCells(HtmlNode dataRow)
+		private static IEnumerable<HtmlDataCell> InitCells(HtmlNode parentNode)
 		{
-			return dataRow.Descendants().Where(d => d.Name == "td").Select(d => new HtmlDataCell(d));
+			return parentNode.Descendants().Where(d => d.Name == "td").Select(d => new HtmlDataCell(d));
 		}
 	}
 }

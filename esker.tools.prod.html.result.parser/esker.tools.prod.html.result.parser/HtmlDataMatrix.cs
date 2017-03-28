@@ -18,13 +18,13 @@
 			content = WebUtility.HtmlDecode(content);
 			_htmlDocument.LoadHtml(content);
 
-			DataRows = GetDataRows(_htmlDocument).Select(r => new HtmlDataRow(r)).ToList();
-			_referenceFormats = DataRows.Select(r => r.DataCells.First().InnerText);
+			Rows = InitRows(_htmlDocument).Select(r => new HtmlDataRow(r)).ToList();
+			_referenceFormats = Rows.Select(r => r.Cells.First().InnerText);
 		}
 
-		public IReadOnlyList<HtmlDataRow> DataRows { get; }
+		public IReadOnlyList<HtmlDataRow> Rows { get; }
 
-		private static IEnumerable<HtmlNode> GetDataRows(HtmlDocument htmlDocument)
+		private static IEnumerable<HtmlNode> InitRows(HtmlDocument htmlDocument)
 		{
 			return htmlDocument.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th"));
 		}
@@ -34,14 +34,14 @@
 			_htmlDocument.Save(filePath);
 		}
 
-		public bool IsAdditionalDataRow(HtmlDataRow currentDataRow)
+		public bool IsAdditionalRow(HtmlDataRow currentRow)
 		{
-			return !_referenceFormats.Contains(currentDataRow.DataCells.First().InnerText);
+			return !_referenceFormats.Contains(currentRow.Cells.First().InnerText);
 		}
 
-		public HtmlDataRow GetDataRowByDateFormat(string dateFormat)
+		public HtmlDataRow GetRowByDateFormat(string dateFormat)
 		{
-			return DataRows.First(r => r.DateFormat == dateFormat);
+			return Rows.First(r => r.DateFormat == dateFormat);
 		}
 	}
 }
