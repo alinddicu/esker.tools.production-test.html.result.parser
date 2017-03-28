@@ -21,6 +21,7 @@
 			DataRows = GetDataRows(_htmlDocument).Select(r => new HtmlDataRow(r)).ToList();
 			_referenceFormats = DataRows.Select(r => r.DataCells.First().InnerText);
 		}
+
 		public IReadOnlyList<HtmlDataRow> DataRows { get; }
 
 		private static IEnumerable<HtmlNode> GetDataRows(HtmlDocument htmlDocument)

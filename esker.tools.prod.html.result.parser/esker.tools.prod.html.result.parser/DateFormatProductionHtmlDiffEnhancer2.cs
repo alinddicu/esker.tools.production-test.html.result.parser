@@ -21,25 +21,25 @@
 				var currentDataRow = currentMatrix.DataRows[currentLineIndex];
 				if (referenceMatrix.IsAdditionalDataRow(currentDataRow))
 				{
-					CheckDataCells(null, currentDataRow, true);
+					CheckDataCells(null, currentDataRow);
 					continue;
 				}
 
-				var currentRowCulture = currentDataRow.DateFormat;
-				var referenceCells = referenceMatrix.GetDataRowByDateFormat(currentRowCulture);
-				CheckDataCells(referenceCells, currentDataRow, false);
+				var currentDateFormat = currentDataRow.DateFormat;
+				var referenceDataRow = referenceMatrix.GetDataRowByDateFormat(currentDateFormat);
+				CheckDataCells(referenceDataRow, currentDataRow);
 			}
 		}
 
 		private static void CheckDataCells(
 			HtmlDataRow referenceDataRow,
-			HtmlDataRow currentDataRow,
-			bool isAdditionalDataRow)
+			HtmlDataRow currentDataRow)
 		{
 			for (var currentCellIndex = 0; currentCellIndex < currentDataRow.DataCells.Count; currentCellIndex++)
 			{
 				var currentCell = currentDataRow.DataCells[currentCellIndex];
-				if (isAdditionalDataRow || currentCell.IsDifferentText(referenceDataRow.DataCells[currentCellIndex]))
+				if (referenceDataRow == null 
+					|| currentCell.IsDifferentText(referenceDataRow.DataCells[currentCellIndex]))
 				{
 					currentCell.MarkDifferent();
 				}
