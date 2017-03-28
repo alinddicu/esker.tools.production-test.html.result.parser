@@ -10,7 +10,6 @@
 	{
 		private readonly HtmlDocument _htmlDocument = new HtmlDocument();
 
-		private readonly IEnumerable<HtmlDataRow> _dataRows;
 		private readonly IEnumerable<string> _referenceFormats;
 
 		public HtmlDataMatrix (string filePath)
@@ -19,9 +18,10 @@
 			content = WebUtility.HtmlDecode(content);
 			_htmlDocument.LoadHtml(content);
 
-			_dataRows = GetDataRows(_htmlDocument).Select(r => new HtmlDataRow(r));
-			_referenceFormats = _dataRows.Select(r => r.DataCells.First().InnerText);
+			DataRows = GetDataRows(_htmlDocument).Select(r => new HtmlDataRow(r)).ToList();
+			_referenceFormats = DataRows.Select(r => r.DataCells.First().InnerText);
 		}
+		public IReadOnlyList<HtmlDataRow> DataRows { get; }
 
 		private static IEnumerable<HtmlNode> GetDataRows(HtmlDocument htmlDocument)
 		{
@@ -40,7 +40,7 @@
 
 		public HtmlDataRow GetDataRowByDateFormat(string dateFormat)
 		{
-			return _dataRows.First(r => r.DateFormat == dateFormat);
+			return DataRows.First(r => r.DateFormat == dateFormat);
 		}
 	}
 }
