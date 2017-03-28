@@ -8,11 +8,12 @@
 	{
 		public HtmlDataRow(HtmlNode dataRow)
 		{
-			DataCells = dataRow.Descendants().Where(d => d.Name == "td").ToList();
-			DateFormat = DataCells.First().InnerText.Trim();
+			DataCells = dataRow.Descendants().Where(d => d.Name == "td").Select(d => new HtmlDataCell(d)).ToList();
+			DateFormat = DataCells.First().InnerText;
 		}
+
 		public string DateFormat { get; }
 
-		public IReadOnlyList<HtmlNode> DataCells { get; }
+		public IReadOnlyList<HtmlDataCell> DataCells { get; }
 	}
 }

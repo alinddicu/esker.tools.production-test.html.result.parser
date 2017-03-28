@@ -1,7 +1,5 @@
 ﻿namespace esker.tools.prod.html.result.parser
 {
-	using HtmlAgilityPack;
-
 	public class DateFormatProductionHtmlDiffEnhancer2
 	{
 		public void Execute(string referenceFile, string courantFile, string diffsFile)
@@ -41,24 +39,11 @@
 			for (var currentCellIndex = 0; currentCellIndex < currentDataRow.DataCells.Count; currentCellIndex++)
 			{
 				var currentCell = currentDataRow.DataCells[currentCellIndex];
-				if (isAdditionalDataRow || IsCellContentDifferent(referenceDataRow, currentCell, currentCellIndex))
+				if (isAdditionalDataRow || currentCell.IsDifferentText(referenceDataRow.DataCells[currentCellIndex]))
 				{
-					MarkCellDifference(currentCell);
+					currentCell.MarkDifferent();
 				}
 			}
-		}
-
-		private static bool IsCellContentDifferent(
-			HtmlDataRow referenceDataRow,
-			HtmlNode currentCell, 
-			int currentCellIndex)
-		{
-			return currentCell.InnerHtml != referenceDataRow.DataCells[currentCellIndex].InnerHtml;
-		}
-
-		private static void MarkCellDifference(HtmlNode currentCell)
-		{
-			currentCell.SetAttributeValue("style", "background-color:orange");
 		}
 	}
 }
