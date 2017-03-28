@@ -47,11 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateFormatProductionHtmlDiffEnhancer.cs" />
     <Compile Include="HtmlDataCell.cs" />
     <Compile Include="HtmlDataMatrix.cs" />
     <Compile Include="HtmlDataRow.cs" />
-    <Compile Include="DateFormatProductionHtmlDiffEnhancer2.cs" />
+    <Compile Include="DateFormatProductionHtmlDiffEnhancer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

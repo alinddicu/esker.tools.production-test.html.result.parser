@@ -1,108 +1,49 @@
 ﻿namespace esker.tools.prod.html.result.parser
 {
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
-	using System.Net;
-	using HtmlAgilityPack;
-
 	public class DateFormatProductionHtmlDiffEnhancer
 	{
 		public void Execute(string referenceFile, string courantFile, string diffsFile)
 		{
-			var referenceDataRows = GetDataRows(referenceFile).ToArray();
-			var currentHtmlDoc = GetHtmlDoc(courantFile);
-			var currentDataRows = GetDataRows(currentHtmlDoc).ToArray();
+			var referenceMatrix = new HtmlDataMatrix(referenceFile);
+			var currentMatrix = new HtmlDataMatrix(courantFile);
 
-			CheckDataRows(referenceDataRows, currentDataRows);
+			CheckDataRows(referenceMatrix, currentMatrix);
 
-			currentHtmlDoc.Save(diffsFile);
-		}
-
-		private static HtmlDocument GetHtmlDoc(string filePath)
-		{
-			var content = File.ReadAllText(filePath);
-			content = WebUtility.HtmlDecode(content);
-			var referenceHtmlDoc = new HtmlDocument();
-			referenceHtmlDoc.LoadHtml(content);
-			return referenceHtmlDoc;
-		}
-
-		private static IEnumerable<HtmlNode> GetDataRows(string file)
-		{
-			return GetDataRows(GetHtmlDoc(file));
-		}
-
-		private static IEnumerable<HtmlNode> GetDataRows(HtmlDocument htmlDocument)
-		{
-			return htmlDocument.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th"));
+			currentMatrix.Save(diffsFile);
 		}
 
 		private static void CheckDataRows(
-			IReadOnlyList<HtmlNode> referenceDataRows,
-			IReadOnlyList<HtmlNode> currentDataRows)
+			HtmlDataMatrix referenceMatrix,
+			HtmlDataMatrix currentMatrix)
 		{
-			for (var currentLineIndex = 0; currentLineIndex < currentDataRows.Count; currentLineIndex++)
+			for (var currentLineIndex = 0; currentLineIndex < currentMatrix.DataRows.Count; currentLineIndex++)
 			{
-				var currentCells = GetDataCells(currentDataRows[currentLineIndex]).ToArray();
-				if (IsAdditionalDataRow(referenceDataRows, currentCells))
+				var currentDataRow = currentMatrix.DataRows[currentLineIndex];
+				if (referenceMatrix.IsAdditionalDataRow(currentDataRow))
 				{
-					CheckDataCells(new HtmlNode[0], currentCells, true);
+					CheckDataCells(null, currentDataRow);
 					continue;
 				}
 
-				var currentRowCulture = currentCells.First().InnerText;
-				var referenceCells = GetReferenceCellsByCurrentRowCulture(referenceDataRows, currentRowCulture).ToArray();
-				CheckDataCells(referenceCells, currentCells, false);
+				var currentDateFormat = currentDataRow.DateFormat;
+				var referenceDataRow = referenceMatrix.GetDataRowByDateFormat(currentDateFormat);
+				CheckDataCells(referenceDataRow, currentDataRow);
 			}
-		}
-
-		private static IEnumerable<HtmlNode> GetReferenceCellsByCurrentRowCulture(
-			IEnumerable<HtmlNode> referenceDataRows,
-			string currentRowCulture)
-		{
-			return GetDataCells(referenceDataRows.First(r => GetDataCells(r).First().InnerText == currentRowCulture));
-		}
-
-		private static bool IsAdditionalDataRow(
-			IEnumerable<HtmlNode> referenceDataRows,
-			IEnumerable<HtmlNode> currentRowCells)
-		{
-			var referenceFormats = referenceDataRows.Select(r => GetDataCells(r).First().InnerText);
-			return !referenceFormats.Contains(currentRowCells.First().InnerText);
-		}
-
-		private static IEnumerable<HtmlNode> GetDataCells(HtmlNode dataRow)
-		{
-			return dataRow.Descendants().Where(d => d.Name == "td");
 		}
 
 		private static void CheckDataCells(
-			IReadOnlyList<HtmlNode> referenceLineCells,
-			IReadOnlyList<HtmlNode> currentLineCells,
-			bool isAdditionalDataRow)
+			HtmlDataRow referenceDataRow,
+			HtmlDataRow currentDataRow)
 		{
-			for (var currantCellIndex = 0; currantCellIndex < currentLineCells.Count; currantCellIndex++)
+			for (var currentCellIndex = 0; currentCellIndex < currentDataRow.DataCells.Count; currentCellIndex++)
 			{
-				var currentCell = currentLineCells[currantCellIndex];
-				if (isAdditionalDataRow || IsCellContentDifferent(referenceLineCells, currentCell, currantCellIndex))
+				var currentCell = currentDataRow.DataCells[currentCellIndex];
+				if (referenceDataRow == null 
+					|| currentCell.IsDifferentText(referenceDataRow.DataCells[currentCellIndex]))
 				{
-					MarkCellDifference(currentCell);
+					currentCell.MarkDifferent();
 				}
 			}
-		}
-
-		private static bool IsCellContentDifferent(
-			IReadOnlyList<HtmlNode> referenceLineCells,
-			HtmlNode currentCell, 
-			int currentCellIndex)
-		{
-			return currentCell.InnerHtml != referenceLineCells[currentCellIndex].InnerHtml;
-		}
-
-		private static void MarkCellDifference(HtmlNode currentCell)
-		{
-			currentCell.SetAttributeValue("style", "background-color:orange");
 		}
 	}
 }

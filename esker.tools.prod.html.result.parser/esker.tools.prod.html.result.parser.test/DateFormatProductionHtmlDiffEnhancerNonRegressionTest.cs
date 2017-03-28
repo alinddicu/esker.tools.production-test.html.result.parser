@@ -35,7 +35,7 @@
 			var expectedDiffsPath = testName + "/expected-diffs.htm";
 			var referencePath = testName + "/reference.htm";
 
-			new DateFormatProductionHtmlDiffEnhancer2().Execute(referencePath, courantPath, diffsPath);
+			new DateFormatProductionHtmlDiffEnhancer().Execute(referencePath, courantPath, diffsPath);
 
 			var content = File.ReadAllText(diffsPath);
 			var expectedContent = File.ReadAllText(expectedDiffsPath);

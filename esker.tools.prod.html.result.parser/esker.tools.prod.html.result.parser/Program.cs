@@ -9,7 +9,7 @@
 		private const string CourantFileTemplate = RootDirectory + @"{0}\AttachFiles\Courant\EOD\AttachFile1.htm";
 		private const string DiffsFileTemplate = RootDirectory + @"{0}\AttachFiles\Diffs\EOD\AttachFile1.htm";
 
-		private static readonly DateFormatProductionHtmlDiffEnhancer2 Enhancer = new DateFormatProductionHtmlDiffEnhancer2();
+		private static readonly DateFormatProductionHtmlDiffEnhancer Enhancer = new DateFormatProductionHtmlDiffEnhancer();
 
 		public static void Main(string[] args)
 		{
