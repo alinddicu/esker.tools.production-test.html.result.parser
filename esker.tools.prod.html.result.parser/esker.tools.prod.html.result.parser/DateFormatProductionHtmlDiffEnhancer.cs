@@ -21,10 +21,10 @@
 
 		private static HtmlDocument GetHtmlDoc(string filePath)
 		{
-			var referenceContent = File.ReadAllText(filePath);
-			referenceContent = WebUtility.HtmlDecode(referenceContent);
+			var content = File.ReadAllText(filePath);
+			content = WebUtility.HtmlDecode(content);
 			var referenceHtmlDoc = new HtmlDocument();
-			referenceHtmlDoc.LoadHtml(referenceContent);
+			referenceHtmlDoc.LoadHtml(content);
 			return referenceHtmlDoc;
 		}
 
