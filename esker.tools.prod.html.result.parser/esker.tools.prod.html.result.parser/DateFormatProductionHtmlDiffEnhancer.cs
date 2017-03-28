@@ -16,9 +16,8 @@
 			HtmlDataMatrix referenceMatrix,
 			HtmlDataMatrix currentMatrix)
 		{
-			for (var currentLineIndex = 0; currentLineIndex < currentMatrix.DataRows.Count; currentLineIndex++)
+			foreach (var currentDataRow in currentMatrix.DataRows)
 			{
-				var currentDataRow = currentMatrix.DataRows[currentLineIndex];
 				if (referenceMatrix.IsAdditionalDataRow(currentDataRow))
 				{
 					CheckDataCells(null, currentDataRow);
