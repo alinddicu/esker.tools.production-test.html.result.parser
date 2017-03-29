@@ -18,7 +18,7 @@
 		{
 			foreach (var currentDataRow in currentTable.Rows)
 			{
-				if (referenceTable.IsAdditionalRow(currentDataRow))
+				if (referenceTable.IsNewDateFormat(currentDataRow))
 				{
 					DiffCellsInRows(null, currentDataRow);
 					continue;

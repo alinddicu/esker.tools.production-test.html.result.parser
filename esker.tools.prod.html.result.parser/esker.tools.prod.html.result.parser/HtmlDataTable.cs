@@ -26,7 +26,10 @@
 
 		private static IEnumerable<HtmlNode> InitRows(HtmlDocument htmlDocument)
 		{
-			return htmlDocument.DocumentNode.Descendants().Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th"));
+			return htmlDocument
+				.DocumentNode
+				.Descendants()
+				.Where(d => d.Name == "tr" && !d.InnerHtml.Contains("th"));
 		}
 
 		public void Save(string filePath)
@@ -34,9 +37,9 @@
 			_htmlDocument.Save(filePath);
 		}
 
-		public bool IsAdditionalRow(HtmlDataRow currentRow)
+		public bool IsNewDateFormat(HtmlDataRow currentRow)
 		{
-			return !_referenceFormats.Contains(currentRow.Cells.First().InnerText);
+			return !_referenceFormats.Contains(currentRow.DateFormat);
 		}
 
 		public HtmlDataRow GetRowByDateFormat(string dateFormat)

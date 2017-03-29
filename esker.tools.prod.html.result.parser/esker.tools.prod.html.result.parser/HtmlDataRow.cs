@@ -18,7 +18,10 @@
 
 		private static IEnumerable<HtmlDataCell> InitCells(HtmlNode parentNode)
 		{
-			return parentNode.Descendants().Where(d => d.Name == "td").Select(d => new HtmlDataCell(d));
+			return parentNode
+				.Descendants()
+				.Where(d => d.Name == "td")
+				.Select(d => new HtmlDataCell(d));
 		}
 	}
 }
