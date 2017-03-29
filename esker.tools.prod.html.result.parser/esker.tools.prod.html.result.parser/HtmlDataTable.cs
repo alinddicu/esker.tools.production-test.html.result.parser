@@ -6,13 +6,13 @@
 	using System.Net;
 	using HtmlAgilityPack;
 
-	public class HtmlDataMatrix
+	public class HtmlDataTable
 	{
 		private readonly HtmlDocument _htmlDocument = new HtmlDocument();
 
 		private readonly IEnumerable<string> _referenceFormats;
 
-		public HtmlDataMatrix (string filePath)
+		public HtmlDataTable (string filePath)
 		{
 			var content = File.ReadAllText(filePath);
 			content = WebUtility.HtmlDecode(content);

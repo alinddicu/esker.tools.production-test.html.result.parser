@@ -48,7 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HtmlDataCell.cs" />
-    <Compile Include="HtmlDataMatrix.cs" />
+    <Compile Include="HtmlDataTable.cs" />
     <Compile Include="HtmlDataRow.cs" />
     <Compile Include="DateFormatProductionHtmlDiffEnhancer.cs" />
     <Compile Include="Program.cs" />

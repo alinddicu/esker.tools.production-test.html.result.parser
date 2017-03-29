@@ -4,33 +4,33 @@
 	{
 		public void Execute(string referenceFile, string courantFile, string diffsFile)
 		{
-			var referenceMatrix = new HtmlDataMatrix(referenceFile);
-			var currentMatrix = new HtmlDataMatrix(courantFile);
+			var referenceTable = new HtmlDataTable(referenceFile);
+			var currentTable = new HtmlDataTable(courantFile);
 
-			CheckMatrixes(referenceMatrix, currentMatrix);
+			DiffTables(referenceTable, currentTable);
 
-			currentMatrix.Save(diffsFile);
+			currentTable.Save(diffsFile);
 		}
 
-		private static void CheckMatrixes(
-			HtmlDataMatrix referenceMatrix,
-			HtmlDataMatrix currentMatrix)
+		private static void DiffTables(
+			HtmlDataTable referenceTable,
+			HtmlDataTable currentTable)
 		{
-			foreach (var currentDataRow in currentMatrix.Rows)
+			foreach (var currentDataRow in currentTable.Rows)
 			{
-				if (referenceMatrix.IsAdditionalRow(currentDataRow))
+				if (referenceTable.IsAdditionalRow(currentDataRow))
 				{
-					CheckCellsInRows(null, currentDataRow);
+					DiffCellsInRows(null, currentDataRow);
 					continue;
 				}
 
 				var currentDateFormat = currentDataRow.DateFormat;
-				var referenceDataRow = referenceMatrix.GetRowByDateFormat(currentDateFormat);
-				CheckCellsInRows(referenceDataRow, currentDataRow);
+				var referenceDataRow = referenceTable.GetRowByDateFormat(currentDateFormat);
+				DiffCellsInRows(referenceDataRow, currentDataRow);
 			}
 		}
 
-		private static void CheckCellsInRows(
+		private static void DiffCellsInRows(
 			HtmlDataRow referenceRow,
 			HtmlDataRow currentRow)
 		{
