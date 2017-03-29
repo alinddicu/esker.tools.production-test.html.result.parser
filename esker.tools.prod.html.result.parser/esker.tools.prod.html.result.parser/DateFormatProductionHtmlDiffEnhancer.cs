@@ -18,15 +18,8 @@
 		{
 			foreach (var currentDataRow in currentTable.Rows)
 			{
-				if (referenceTable.IsNewDateFormat(currentDataRow))
-				{
-					DiffCellsInRows(null, currentDataRow);
-					continue;
-				}
-
-				var currentDateFormat = currentDataRow.DateFormat;
-				var referenceDataRow = referenceTable.GetRowByDateFormat(currentDateFormat);
-				DiffCellsInRows(referenceDataRow, currentDataRow);
+				var referenceRow = referenceTable.GetRowByDateFormat(currentDataRow.DateFormat);
+				DiffCellsInRows(referenceRow, currentDataRow);
 			}
 		}
 

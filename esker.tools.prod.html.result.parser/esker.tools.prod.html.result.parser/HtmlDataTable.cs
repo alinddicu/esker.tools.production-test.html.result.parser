@@ -10,8 +10,6 @@
 	{
 		private readonly HtmlDocument _htmlDocument = new HtmlDocument();
 
-		private readonly IEnumerable<string> _referenceFormats;
-
 		public HtmlDataTable (string filePath)
 		{
 			var content = File.ReadAllText(filePath);
@@ -19,7 +17,6 @@
 			_htmlDocument.LoadHtml(content);
 
 			Rows = InitRows(_htmlDocument).Select(r => new HtmlDataRow(r)).ToList();
-			_referenceFormats = Rows.Select(r => r.Cells.First().InnerText);
 		}
 
 		public IReadOnlyList<HtmlDataRow> Rows { get; }
@@ -37,14 +34,9 @@
 			_htmlDocument.Save(filePath);
 		}
 
-		public bool IsNewDateFormat(HtmlDataRow currentRow)
-		{
-			return !_referenceFormats.Contains(currentRow.DateFormat);
-		}
-
 		public HtmlDataRow GetRowByDateFormat(string dateFormat)
 		{
-			return Rows.First(r => r.DateFormat == dateFormat);
+			return Rows.FirstOrDefault(r => r.DateFormat == dateFormat);
 		}
 	}
 }
