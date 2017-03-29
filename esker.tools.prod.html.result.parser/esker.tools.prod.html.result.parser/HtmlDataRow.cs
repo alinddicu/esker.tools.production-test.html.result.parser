@@ -21,7 +21,7 @@
 			return parentNode
 				.Descendants()
 				.Where(d => d.Name == "td")
-				.Select(d => new HtmlDataCell(d));
+				.Select((td, index) => new HtmlDataCell(index, td));
 		}
 	}
 }

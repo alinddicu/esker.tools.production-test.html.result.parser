@@ -12,9 +12,7 @@
 			currentTable.Save(diffsFile);
 		}
 
-		private static void DiffTables(
-			HtmlDataTable referenceTable,
-			HtmlDataTable currentTable)
+		private static void DiffTables(HtmlDataTable referenceTable, HtmlDataTable currentTable)
 		{
 			foreach (var currentDataRow in currentTable.Rows)
 			{
@@ -23,15 +21,11 @@
 			}
 		}
 
-		private static void DiffCellsInRows(
-			HtmlDataRow referenceRow,
-			HtmlDataRow currentRow)
+		private static void DiffCellsInRows(HtmlDataRow referenceRow, HtmlDataRow currentRow)
 		{
-			for (var currentCellIndex = 0; currentCellIndex < currentRow.Cells.Count; currentCellIndex++)
+			foreach (var currentCell in currentRow.Cells)
 			{
-				var currentCell = currentRow.Cells[currentCellIndex];
-				if (referenceRow == null 
-					|| currentCell.IsDifferentText(referenceRow.Cells[currentCellIndex]))
+				if (currentCell.HasDifferentText(referenceRow))
 				{
 					currentCell.MarkDifferent();
 				}
